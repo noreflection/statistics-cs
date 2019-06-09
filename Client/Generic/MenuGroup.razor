@@ -1,0 +1,21 @@
+﻿<div class="item">
+    <div class="header">
+        @State.header
+    </div>
+
+    <div class="menu">
+        @foreach (var subGroup in State.subgroups)
+        {
+            <a class="item" href=@subGroup.href>
+                @subGroup.text
+            </a>
+        }
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public (string header, List<(string text, string href)> subgroups) State { get; set; }
+
+}

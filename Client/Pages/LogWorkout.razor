@@ -1,0 +1,91 @@
+@page "/log-workout"
+
+<div class="logworkout-date-picker">
+    <MatDatePicker Label="pickup a date"
+                   Outlined="true"
+                   Dense="true"
+                   @bind-Value=@SelectedDate />
+
+
+    @if (!isDateSelected)
+    {
+        <PointingLabel Text="pick up a date" />
+    }
+
+    <Dropdown ClassName="excersizecard-dropdown"
+              placeholderText="Pick Up Current Phase"
+              selectOptions=@(phaseOptions)
+              @bind-Value=@selectedPhase />
+
+</div>
+
+<div class="logworkout-cards">
+    <div class="ui cards">
+        @foreach (var exercise in exercises)
+        {
+            <ExcersizeCard Name=@exercise
+                           SubmitDate=@(SelectedDate ?? default)
+                           Phase=@selectedPhase />
+        }
+    </div>
+</div>
+
+@code
+{
+    #region fields
+    private string _selectedPhase = "First Phase";
+    private string selectedPhase
+    {
+        get { return _selectedPhase; }
+        set
+        {
+            _selectedPhase = value;
+            StateHasChanged();
+        }
+    }
+
+    private bool isDateSelected { get; set; } = false;
+
+    private DateTime? _selectedDate = default;
+    private DateTime? SelectedDate
+    {
+        get { return _selectedDate; }
+        set { _selectedDate = value; isDateSelected = true; }
+    }
+
+    private string _dayOfWeek;
+    private string dayOfWeek
+    {
+        get { return _dayOfWeek; }
+        set
+        {
+            _dayOfWeek = value;
+            StateHasChanged();
+        }
+    }
+    //todo: put that in the db
+    private List<string> exercises = new List<string>
+{
+        "Barbell Bench Press",
+        "Barbell Squat ",
+        "Triceps Pushdown",
+        "Barbell Curl from Elbows",
+        "Barbell Curl from Shoulders",
+        "Standing Calf Raise"
+    };
+
+    private List<object> phaseOptions = new List<object> {
+        "First Phase",
+        "Second Phase",
+        "Third Phase",
+        "Forth Phase"
+    };
+    #endregion
+
+    #region functions
+    void OnIt()
+    {
+        Console.WriteLine($"here{selectedPhase}");
+    }
+    #endregion
+}

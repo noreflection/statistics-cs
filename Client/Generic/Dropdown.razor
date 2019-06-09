@@ -1,0 +1,43 @@
+﻿@inject IJSRuntime JsRuntime;
+
+<div class=@ClassName>
+    <select class="ui dropdown mini"
+            @onchange=@OnChange>
+
+        <option value=" ">@PlaceholderText</option>
+        @foreach (var item in SelectOptions)
+        {
+            <option value=@item.ToString()>
+                @item.ToString()
+            </option>
+        }
+    </select>
+</div>
+
+@code {
+    #region fields
+    [Parameter]
+    public string ClassName { get; set; }
+
+    [Parameter]
+    public string PlaceholderText { get; set; }
+
+    [Parameter]
+    public List<object> SelectOptions { get; set; }
+
+    [Parameter]
+    public Action<string> ValueChanged { get; set; }
+    #endregion
+    
+    #region functions
+    protected override void OnAfterRender()
+    {
+        JsRuntime.InvokeAsync<object>("dropdown.setDropdown");
+    }
+
+    void OnChange(UIChangeEventArgs e)
+    {
+        ValueChanged(e.Value.ToString());
+    }
+    #endregion
+}

@@ -1,0 +1,30 @@
+﻿<a class="ui left pointing @(pointingColorClass) label">
+    @Text
+</a>
+
+@code {
+    #region fields
+    [Parameter]
+    public PointingColor Color { get; set; } = PointingColor.White;
+
+    public enum PointingColor
+    {
+        Red,
+        Blue,
+        Green,
+        White
+    }
+
+    private string pointingColorClass => Color switch
+    {
+        PointingColor.Blue => "blue",
+        PointingColor.Red => "red",
+        PointingColor.Green => "green",
+        PointingColor.White => "white",
+        _ => "white"
+        };
+
+    [Parameter]
+    public string Text { get; set; } = "default text";
+    #endregion
+}

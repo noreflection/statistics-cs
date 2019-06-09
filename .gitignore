@@ -1,8 +1,10 @@
 .vs/
 bin/
 obj/
+.idea
 *.user
 artifacts/
 .vscode/
 .dotnet/
 *.binlog
+/Server/Properties/PublishProfiles

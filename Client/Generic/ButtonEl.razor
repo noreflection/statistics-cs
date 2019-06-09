@@ -1,0 +1,49 @@
+﻿<button class="ui button @(classes)"
+        @onclick=@OnClick>
+    @Text
+</button>
+
+@code {
+    #region fields
+    [Parameter]
+    public string Text { get; set; }
+
+    [Parameter]
+    public ButtonType Type { get; set; } = ButtonType.Primary;
+    public enum ButtonType { Secondary, Primary }
+    private string typeClass => Type switch
+    {
+        ButtonType.Secondary => "secondary",
+        ButtonType.Primary => "primary",
+        _ => "primary"
+    };
+
+    [Parameter]
+    public ButtonSize Size { get; set; } = ButtonSize.Mini;
+    public enum ButtonSize { Mini, Tiny, Small, Medium, Large, Big, Massive }
+    private string sizeClass => Size switch
+    {
+        ButtonSize.Mini => "mini",
+        ButtonSize.Tiny => "tiny",
+        ButtonSize.Small => "small",
+        ButtonSize.Medium => "medium",
+        ButtonSize.Large => "large",
+        ButtonSize.Big => "big",
+        ButtonSize.Massive => "massive",
+        _ => "mini"
+    };
+
+    [Parameter]
+    public bool Inverted { get; set; } = false;
+    private string invertedClass => Inverted switch
+    {
+        true => "inverted",
+        _ => "",
+    };
+
+    [Parameter]
+    public Action<UIMouseEventArgs> OnClick { get; set; }
+
+    private string classes => string.Join(" ", typeClass, sizeClass, invertedClass);
+    #endregion
+}
