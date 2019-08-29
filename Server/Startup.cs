@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 using Statistics.Server.Models;
+using Statistics.Server.Models.Abstract;
+using Statistics.Server.Models.Concrete;
 
 namespace Statistics.Server
 {
@@ -20,7 +22,8 @@ namespace Statistics.Server
             //todo: move to settings
             var connection = @"Server=DESKTOP-K9M67LC\SQLEXPRESS;Database=ApplicationDatabase;Trusted_Connection=True;";
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
-            services.AddTransient<IExerciseRepository, ExerciseRepository>();
+            services.AddTransient<IWorkoutRepository, WorkoutRepository>();
+            services.AddTransient<IAbsWorkoutRepository, AbsWorkoutRepository>();
 
 
             services.AddResponseCompression(opts =>

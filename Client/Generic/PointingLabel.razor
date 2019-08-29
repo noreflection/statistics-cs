@@ -1,4 +1,4 @@
-﻿<a class="ui left pointing @(pointingColorClass) label">
+﻿<a class="ui left pointing @(PointingColorClass) label">
     @Text
 </a>
 
@@ -15,14 +15,7 @@
         White
     }
 
-    private string pointingColorClass => Color switch
-    {
-        PointingColor.Blue => "blue",
-        PointingColor.Red => "red",
-        PointingColor.Green => "green",
-        PointingColor.White => "white",
-        _ => "white"
-        };
+    private string PointingColorClass => Color.ToString().ToLower();
 
     [Parameter]
     public string Text { get; set; } = "default text";

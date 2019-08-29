@@ -1,65 +1,79 @@
 @using static Generic.ButtonEl;
-@using static Generic.PointingLabel;
+@using static Utilities.RequestStatus;
 @using Statistics.Shared
+@using Statistics.Client.Utilities
+
 @inject HttpClient Http
 
-<div class="card excersizecard-card">
+<div class="card exerciseCard-card">
     <div class="content">
         <div class="header">@Name</div>
         <div class="meta">@Phase</div>
 
-        <div class="ui labeled input mini excersizecard-dropdownwithlabel">
+        <div class="ui labeled input mini exerciseCard-dropdownWithLabel">
             <div class="ui label">
                 weight
             </div>
             <input type="text"
                    placeholder="set weight"
-                   @bind=@Weight
-                   @onclick=@RemoveStatusPopup />
+                   @bind="@Weight" 
+                   @onclick="@RemoveStatusPopup" />
         </div>
 
-        <Dropdown ClassName="excersizecard-dropdown"
+        <Dropdown ClassName="exerciseCard-dropdown"
                   PlaceholderText="Repetitions"
-                  SelectOptions=@(new List<object> {"3", "4", "5"})
-                  @bind-Value=@Repetitions />
+                  SelectOptions=@(new List<object> {"3", "4", "5"}) 
+                  @bind-Value="@Repetitions" />
 
-        <Dropdown ClassName="excersizecard-dropdown"
+        <Dropdown ClassName="exerciseCard-dropdown"
                   PlaceholderText="Add weight next time?"
-                  SelectOptions=@(new List<object> {"no", "1.5", "2.5"})
-                  @bind-Value=@ShouldAddWeight />
-
-        <div class="excersizecard-button">
+                  SelectOptions=@(new List<object> {"no", "1.5", "2.5"}) 
+                  @bind-Value="@ShouldAddWeight" />
+        
+        <div class="exerciseCard-button">
             <ButtonEl Text="Submit"
-                      Type=ButtonType.Secondary
-                      Size=ButtonSize.Mini
-                      OnClick=@OnSubmit />
+                      Type="ButtonType.Secondary"
+                      Size="ButtonSize.Mini"
+                      OnClick="@OnSubmit" />
 
-            @if (submitStatus == SubmitStatus.Ok)
-            {
-                <PointingLabel Text="Submitted!"
-                               Color=PointingColor.Green />
-            }
-            @if (submitStatus == SubmitStatus.Updated)
-            {
-                <PointingLabel Text="Updated!"
-                               Color=PointingColor.Blue />
-            }
-            @if (submitStatus == SubmitStatus.Error)
-            {
-                <PointingLabel Text="Error!"
-                               Color=PointingColor.Red />
-            }
+
+            <RequestStatusPopup Text=@((forOk:"Exercise Submitted!", 
+                                         forUpdated:"Exercise Updated!", 
+                                         forError:"Same values in db for this ex!"))
+                                StatusFor="@SubmitStatus" />
 
         </div>
     </div>
 </div>
 
+<style>
+    .exerciseCard-card {
+        width:19rem;
+    }
+    .exerciseCard-button {
+        padding-top: 1rem;
+    }
+    .exerciseCard-dropdownWithLabel {
+        padding-top:1rem;
+        width:7rem;
+    }
+    .exerciseCard-dropdown {
+        padding-top: 1rem;
+    }
+</style>
+
 @code {
+    //todo: add edit button and logic
     #region fields
     [Parameter]
     public string Name { get; set; }
     [Parameter]
+    public int Number { get; set; }
+
+    [Parameter]
     public string Phase { get; set; }
+    [Parameter]
+    public string Evaluation { get; set; }
 
     [Parameter]
     public DateTime SubmitDate { get; set; }
@@ -67,6 +81,7 @@
     private string Weight { get; set; }
 
     private string _shouldAddWeight;
+
     string ShouldAddWeight
     {
         get => _shouldAddWeight;
@@ -78,6 +93,7 @@
     }
 
     private string _repetitions;
+
     string Repetitions
     {
         get => _repetitions;
@@ -88,9 +104,9 @@
         }
     }
 
-    private enum SubmitStatus { Unsubmitted, Ok, Updated, Error }
-    private SubmitStatus _submitStatus;
-    private SubmitStatus submitStatus
+    private Status _submitStatus;
+
+    private Status SubmitStatus
     {
         get => _submitStatus;
         set
@@ -100,59 +116,54 @@
         }
     }
     #endregion
-
+    
     #region lifecycle
     protected override void OnParametersSet()
     {
+        StateHasChanged();
         RemoveStatusPopup();
     }
     #endregion
-
+    
     #region functions
     void RemoveStatusPopup()
     {
-        submitStatus = SubmitStatus.Unsubmitted;
+        SubmitStatus = Status.Unsubmitted;
     }
 
     async void OnSubmit(UIMouseEventArgs e)
     {
-        var exercise = new Exercise
+        var workout = new Workout
         {
-            Name = Name,
-            Phase = this.Phase,
-            Weight = this.Weight,
-            DayOfWeek = this.SubmitDate.DayOfWeek.ToString(),
-            ShouldAddWeight = this.ShouldAddWeight,
-            Repetitions = this.Repetitions,
-            SubmitDate = SubmitDate.ToLocalTime(),
+            DayOfWeek = SubmitDate.AddDays(1).DayOfWeek.ToString(),
+            Phase = Phase,
+            SubmitDate = SubmitDate.AddDays(1),
+            Evaluation = Evaluation,
+            Exercises = new List<Exercise>
+            {
+                new Exercise
+                {
+                    Name = Name,
+                    Number = Number,
+                    Weight = Weight,
+                    ShouldAddWeight = ShouldAddWeight,
+                    Repetitions = Repetitions
+                }
+            }
         };
-
-        Console.WriteLine($"" +
-            $"name{exercise.Name}" +
-            $"weekday:{exercise.DayOfWeek}" +
-            $"modelweight:{exercise.Weight} " +
-            $"modelreps:{exercise.Repetitions} " +
-            $"date:{exercise.SubmitDate}");
-
-        await PostExercise(exercise);
+        
+        await PostExercise(workout);
     }
     #endregion
-
+    
     #region requests
     //todo: abstract these calls into the service
-    public async Task PostExercise(Exercise exercise)
+    private async Task PostExercise(Workout workout)
     {
-        var responceCode = await Http.PostJsonAsync<int>("/api/exercises", exercise);
+        var responseCode = await Http.PostJsonAsync<RequestStatus.Status>("/api/workouts", workout);
+        SubmitStatus = responseCode;
 
-        submitStatus = responceCode switch
-        {
-            0 => SubmitStatus.Error,
-            1 => SubmitStatus.Ok,
-            2 => SubmitStatus.Updated,
-            _ => SubmitStatus.Unsubmitted,
-        };
-
-        Console.WriteLine($"respcode:{responceCode}");
+        Console.WriteLine($"code:{responseCode}");
     }
     #endregion
 }

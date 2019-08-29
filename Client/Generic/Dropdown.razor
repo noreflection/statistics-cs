@@ -1,8 +1,8 @@
 ﻿@inject IJSRuntime JsRuntime;
 
-<div class=@ClassName>
+<div class="@ClassName">
     <select class="ui dropdown mini"
-            @onchange=@OnChange>
+            @onchange="@OnChange">
 
         <option value=" ">@PlaceholderText</option>
         @foreach (var item in SelectOptions)
@@ -24,6 +24,9 @@
 
     [Parameter]
     public List<object> SelectOptions { get; set; }
+
+    [Parameter]
+    public string Value { get; set; }
 
     [Parameter]
     public Action<string> ValueChanged { get; set; }

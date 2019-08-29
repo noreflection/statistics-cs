@@ -1,42 +1,73 @@
 @page "/log-workout"
 
-<div class="logworkout-date-picker">
+@using Statistics.Shared
+
+@inject HttpClient Http
+
+<div class="logWorkout-datePicker">
     <MatDatePicker Label="pickup a date"
                    Outlined="true"
                    Dense="true"
                    @bind-Value=@SelectedDate />
 
 
-    @if (!isDateSelected)
+    @if (!IsDateSelected)
     {
-        <PointingLabel Text="pick up a date" />
+        <PointingLabel Text="pick up a date to log" />
     }
 
-    <Dropdown ClassName="excersizecard-dropdown"
+    <Dropdown ClassName="exerciseCard-dropdown "
               placeholderText="Pick Up Current Phase"
-              selectOptions=@(phaseOptions)
-              @bind-Value=@selectedPhase />
+              selectOptions=@_phaseOptions
+              @bind-Value=@SelectedPhase />
+    
+
+    <Dropdown ClassName="exerciseCard-dropdown "
+                  placeholderText="Evaluate"
+                  selectOptions=@(new List<object>
+                                {
+                                    Evaluation.Good,
+                                    Evaluation.Bad,
+                                    Evaluation.Mediocre
+                                })
+                  @bind-Value=@SelectedEvaluation />
 
 </div>
 
-<div class="logworkout-cards">
+<div class="logWorkout-cards">
     <div class="ui cards">
-        @foreach (var exercise in exercises)
+        @foreach (var exercise in _exercises.Select((value, index) => new {value, index}))
         {
-            <ExcersizeCard Name=@exercise
+            <ExcersizeCard Number=@(exercise.index + 1)
+                           Name=@exercise.value
                            SubmitDate=@(SelectedDate ?? default)
-                           Phase=@selectedPhase />
+                           Evaluation=@SelectedEvaluation
+                           Phase=@SelectedPhase />
         }
     </div>
 </div>
+
+<style>
+    .logWorkout-datePicker {
+        padding-left: 6rem;
+        padding-top: 2rem;
+    }
+
+    .logWorkout-cards {
+        padding-top: 2rem;
+        padding-left: 6rem;
+        width: 100rem;
+    }
+</style>
 
 @code
 {
     #region fields
     private string _selectedPhase = "First Phase";
-    private string selectedPhase
+
+    private string SelectedPhase
     {
-        get { return _selectedPhase; }
+        get => _selectedPhase;
         set
         {
             _selectedPhase = value;
@@ -44,28 +75,35 @@
         }
     }
 
-    private bool isDateSelected { get; set; } = false;
 
-    private DateTime? _selectedDate = default;
-    private DateTime? SelectedDate
+    private string _selectedEvaluation = "Not Evaluated";
+    private string SelectedEvaluation
     {
-        get { return _selectedDate; }
-        set { _selectedDate = value; isDateSelected = true; }
-    }
-
-    private string _dayOfWeek;
-    private string dayOfWeek
-    {
-        get { return _dayOfWeek; }
+        get => _selectedEvaluation;
         set
         {
-            _dayOfWeek = value;
+            _selectedEvaluation = value;
             StateHasChanged();
         }
     }
-    //todo: put that in the db
-    private List<string> exercises = new List<string>
-{
+    
+    private bool IsDateSelected { get; set; }
+
+    private DateTime? _selectedDate;
+
+    private DateTime? SelectedDate
+    {
+        get => _selectedDate;
+        set
+        {
+            _selectedDate = value;
+            IsDateSelected = true;
+        }
+    }
+
+    //todo: put it in db
+    private readonly List<string> _exercises = new List<string>
+    {
         "Barbell Bench Press",
         "Barbell Squat ",
         "Triceps Pushdown",
@@ -74,18 +112,12 @@
         "Standing Calf Raise"
     };
 
-    private List<object> phaseOptions = new List<object> {
+    private readonly List<object> _phaseOptions = new List<object>
+    {
         "First Phase",
         "Second Phase",
         "Third Phase",
         "Forth Phase"
     };
-    #endregion
-
-    #region functions
-    void OnIt()
-    {
-        Console.WriteLine($"here{selectedPhase}");
-    }
     #endregion
 }

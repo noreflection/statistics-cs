@@ -1,10 +1,17 @@
-﻿<div class="logged-workouts-counter" style="text-align: center; padding-top:2rem">
-    <div class="ui statistic">
+﻿    <div class="ui statistic">
         <div class="value">
-            12
+            @WorkoutCount
         </div>
         <div class="label">
-            Logged Workouts
+            @Text
         </div>
     </div>
-</div>
+
+@code {
+
+    [Parameter]
+    public int WorkoutCount { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    
+}

@@ -1,36 +1,30 @@
-﻿@* todo:remove inline styling *@
-    <div class="ui vertical inverted menu"
-         style="width: 18rem; border-top-right-radius: 0; border-bottom-right-radius: 0;height:100%">
+﻿<div class="ui vertical inverted menu"
+     style="width: 18rem; border-top-right-radius: 0; border-bottom-right-radius: 0;height:100%">
 
-        <div class="item">
-            <a href="/">
-                <b>APPLICATION</b>
-            </a>
-        </div>
-
-        <MenuElement Title="Testing Page" Href="/testingpage" />
-        <MenuElement Title="Log Workout" Href="/log-workout" />
-
-        <MenuGroup State=@weeklogGroup />
-        <MenuGroup State=@otherGroup />
-
+    <div class="item">
+        <a href="/">
+            <b>Application Index</b>
+        </a>
     </div>
-
+    <MenuGroup State="@_logGroup"/>
+    <MenuGroup State="@_statisticGroup"/>
+</div>
+0
 @code {
-    private (string header, List<(string, string)>) weeklogGroup =
-        ( "Week Log",
-        new List<(string, string)>{
-            ("Current Week", "/"),
-            ("Current Day","/"),
-            ("Current Month", "/"),
-            ("Current Year","/")
-        });
 
-    private (string, List<(string, string)>) otherGroup =
-        ("Other Group",
-        new List<(string, string)>{
-            ("First Item","/"),
-            ("Second Item", "/")
-        });
+    private readonly (string header, List<(string, string)>) _logGroup =
+        ("Log",
+            new List<(string, string)>
+            {
+                ("Log Workout", "/log-workout"),
+                ("Log Abs","/log-absworkout"),
+            });
 
-}        
+    private readonly (string header, List<(string, string)>) _statisticGroup =
+        ("Statistics",
+            new List<(string, string)>
+            {
+                ("Workout Statistic", "/statistics-workout"),
+                ("Abs Statistic","/statistics-absworkout"),
+            });
+}

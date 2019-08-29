@@ -126,7 +126,7 @@ app {
 
     .navbar-toggler {
         display: none;
-    }
+    }   
 
     .sidebar .collapse {
         /* Never collapse the sidebar for wide screens */
@@ -136,32 +136,70 @@ app {
 
 
 
-/* user-defined */
-.logworkout-date-picker {
+/* user-defined 
+.logWorkout-datePicker {
     padding-left: 6rem;
     padding-top: 2rem;
 }
 
-.logworkout-cards {
+.logWorkout-cards {
     padding-top: 2rem;
     padding-left: 6rem;
     width: 100rem;
 }
 
-.excersizecard-card {
+.workoutStatistics-table {
+    width: 50%;
+    padding-top: 2%;
+    padding-left: 8%;
+}
+
+.exerciseCard-card {
     width:19rem;
 }
-.excersizecard-button {
+.exerciseCard-button {
     padding-top: 1rem;
 }
-.excersizecard-dropdownwithlabel {
+.exerciseCard-dropdownWithLabel {
     padding-top:1rem;
     width:7rem;
 }
-.excersizecard-dropdown {
+.exerciseCard-dropdown {
     padding-top: 1rem;
 }
 
+.index-headerTitle {
+    padding-top: 2%;
+    padding-left: 15%;
+    padding-right: 15%;
+}
 
+.index-headerSegment {
+    padding-top: 3%;
+    padding-left: 15%;
+    padding-right: 15%;
+}
 
+.index-loggedWorkouts-list {
+    padding-top: 3%;
+    width: 57%;
+    padding-left: 45%;
+}
 
+.index-counter {
+    padding-left: 45%;    
+}
+
+.index-workoutCounter {
+    margin:2rem ;
+}
+
+.index-absWorkoutCounter {
+    margin:2rem ;
+}
+
+.logAbs-submitArea {
+    padding-top: 1rem;
+}
+
+ */

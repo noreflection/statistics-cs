@@ -1,0 +1,42 @@
+﻿@using Statistics.Shared
+@using static MatBlazor.BaseMatTable
+
+<MatTable
+    Items="@AbsWorkouts"
+    ApiUrl="api/absworkouts/"
+    AllowSelection="false"
+    ShowFooter="false"
+    ShowPaging="false"
+    PageSize="100"
+    PageSizes="@GetPageSizes()"
+
+    class="mat-elevation-z5">
+    <MatTableHeader>
+        <th>Number</th>
+        <th>SubmitDate</th>
+        <th>AbsType</th>
+        <th>Weekday</th>
+        <th>Evaluation</th>
+    </MatTableHeader>
+    <MatTableRow>
+        <td>@context.Id</td>
+        <td>@context.SubmitDate.ToString("dd MMMM yyyy")</td>
+        <td>@context.AbsType</td>
+        <td>@context.DayOfWeek</td>
+        <td>@context.Evaluation</td>
+    </MatTableRow>
+</MatTable>
+
+@code {
+    private List<AbsWorkout> AbsWorkouts { get; set; }
+
+    /* workaround to show more than 5 rows until it will be fixed in matblazor library
+     https://github.com/SamProf/MatBlazor/issues/133 */
+
+    private static PageSizeStructure[] GetPageSizes() =>
+        new[]
+        {
+            new PageSizeStructure {Text = "10", Value = 100}
+        };
+
+}

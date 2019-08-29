@@ -1,0 +1,35 @@
+﻿@using Statistics.Client.Utilities
+@using static Generic.PointingLabel;
+@using static Statistics.Client.Utilities.RequestStatus;
+
+
+@if (StatusFor == Status.Ok ) 
+{
+    <PointingLabel Text=@Text.forOk
+                   Color=PointingColor.Green />
+}
+@if (StatusFor == Status.Created ) 
+{
+    <PointingLabel Text=@Text.forOk
+                   Color=PointingColor.Green />
+}
+@if (StatusFor == Status.Updated)
+{
+    <PointingLabel Text=@Text.forUpdated
+                   Color=PointingColor.Blue />
+}
+
+@if (StatusFor == Status.Error)
+{
+    <PointingLabel Text=@Text.forError
+                   Color=PointingColor.Red />
+}
+
+
+@code {
+    [Parameter]
+    public (string forOk, string forUpdated, string forError) Text { get; set; }
+  
+    [Parameter]
+    public Status StatusFor { get; set; }
+}

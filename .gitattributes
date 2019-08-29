@@ -1,3 +1,2 @@
-*    text=auto
-
-*.cs text diff
+Client/wwwroot/* linguist-vendored
+*.* linguist-language=C#

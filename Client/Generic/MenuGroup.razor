@@ -4,18 +4,16 @@
     </div>
 
     <div class="menu">
-        @foreach (var subGroup in State.subgroups)
+        @foreach (var (text, href) in State.subgroups)
         {
-            <a class="item" href=@subGroup.href>
-                @subGroup.text
+            <a class="item" href=@href>
+                @text
             </a>
         }
     </div>
 </div>
 
 @code {
-
     [Parameter]
     public (string header, List<(string text, string href)> subgroups) State { get; set; }
-
 }

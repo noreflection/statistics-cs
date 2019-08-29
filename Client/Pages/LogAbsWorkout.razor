@@ -1,0 +1,125 @@
+﻿@page "/log-absworkout"
+@using Statistics.Client.Utilities
+@using static Statistics.Client.Utilities.RequestStatus
+@using Statistics.Shared
+
+@inject HttpClient Http
+
+<div class="logWorkout-datePicker">
+    <MatDatePicker Label="pickup a date"
+                   Outlined="true"
+                   Dense="true"
+                   @bind-Value="@SelectedDate" />
+
+
+    @if (!IsDateSelected)
+    {
+        <PointingLabel Text="pick up a date to log" />
+    }
+
+    <Dropdown ClassName="exerciseCard-dropdown"
+              placeholderText="Pick Up a Type"
+              selectOptions=@(new List<object>
+                            {
+                                AbsWorkoutType.Morning,
+                                AbsWorkoutType.Evening
+                            })
+              @bind-Value="@SelectedAbsType" />
+
+    <Dropdown ClassName="exerciseCard-dropdown"
+              placeholderText="Evaluate"
+              selectOptions=@(new List<object>
+                            {
+                                Evaluation.Good,
+                                Evaluation.Bad,
+                                Evaluation.Mediocre
+                            })
+              @bind-Value="@SelectedEvaluation" />
+
+
+    <div class="logAbs-submitArea">
+        <ButtonEl OnClick="@OnSubmit" Text=@("Submit Abs")/>
+
+        <RequestStatusPopup Text=@((forOk:"Exercise Submitted!", 
+                                     forUpdated:"Exercise Updated!", 
+                                     forError:"Abs exercise with the same date is already in db!"))
+                            StatusFor="@SubmitStatus" />
+    </div>
+</div>
+
+<style>
+    .logAbs-submitArea {
+        padding-top: 1rem;
+    }
+    .exerciseCard-dropdown {
+        padding-top: 1rem;
+    }
+    .logWorkout-datePicker {
+        padding-left: 6rem;
+        padding-top: 2rem;
+    }
+</style>
+
+@code {
+
+    private bool IsDateSelected { get; set; } 
+    private DateTime? _selectedDate = default;
+
+    private DateTime? SelectedDate
+    {
+        get => _selectedDate;
+        set
+        {
+            _selectedDate = value;
+            IsDateSelected = true;
+        }
+    }
+
+    private string _selectedAbsType = "Not Selected";
+
+    private string SelectedAbsType
+    {
+        get => _selectedAbsType;
+        set
+        {
+            _selectedAbsType = value;
+            StateHasChanged();
+        }
+    }
+
+    private string SelectedEvaluation { get; set; } = "Not Evaluated";
+
+
+    private Status _submitStatus;
+
+    private Status SubmitStatus
+    {
+        get => _submitStatus;
+        set
+        {
+            _submitStatus = value;
+            StateHasChanged();
+        }
+    }
+
+    async void OnSubmit(UIMouseEventArgs e)
+    {
+        var abs = new AbsWorkout
+        {
+            SubmitDate = SelectedDate.Value.AddDays(1),
+            DayOfWeek = SelectedDate.Value.AddDays(1).DayOfWeek.ToString(),
+            AbsType = SelectedAbsType,
+            Evaluation = SelectedEvaluation
+        };
+
+        await PostAbs(abs);
+        Console.WriteLine($"date:{abs.SubmitDate} abs:{abs.DayOfWeek} eval:{abs.Evaluation}");
+    }
+
+    private async Task PostAbs(AbsWorkout absWorkout)
+    {
+        SubmitStatus = await Http.PostJsonAsync<Status>("/api/absworkouts", absWorkout);
+        Console.WriteLine($"resp-code:{SubmitStatus}");
+    }
+
+}

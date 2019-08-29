@@ -14,8 +14,8 @@ namespace Statistics.Client
         {
             app.AddComponent<App>("app");
 
-            /* todo: theres a bug currently in mono which returns data in utc all the time despite
-            even forcing ToLocalTime. This package fixing than. Since this will be resolven 
+            /* todo: there's a bug currently in mono which returns data in utc all the time despite
+            even forcing ToLocalTime. This package fixing than. Since this will be resolved 
             on mono level this package would go away. https://github.com/jsakamoto/Toolbelt.Blazor.TimeZoneKit
             */
             app.UseLocalTimeZone();
